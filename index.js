@@ -1,15 +1,94 @@
 #!/usr/bin/env node
-const { processArgs } = require('./services/process-commands.js');
-const initNpm = async () => {
-  let [type, ...value] = (process.argv || []).splice(2);
+const https = require("https");
+const aboutMeFilePath =
+  "https://raw.githubusercontent.com/codebynithin/nithinv/master/nithinv.json";
 
-  if (!type) {
-    type = 'help';
+function inColor(color = "green", text) {
+  const colorMap = {
+    green: "\x1b[32m",
+    yellow: "\x1b[33m",
+    cyan: "\x1b[36m",
+  };
+  const reset = "\x1b[0m";
+
+  return `${colorMap[color]}${text}${reset}`;
+}
+
+function keyValueInColor(key, value) {
+  const keyValueCharStack = [];
+
+  for (const char of key.split("")) {
+    keyValueCharStack.push(inColor("green", char));
   }
 
-  processArgs(type, value?.join(' '));
-};
+  keyValueCharStack.push(`: "`);
 
-initNpm();
+  for (const char of value.split("")) {
+    keyValueCharStack.push(inColor("yellow", char));
+  }
 
-module.exports = initNpm;
+  keyValueCharStack.push(`"`);
+
+  return keyValueCharStack;
+}
+
+function typeToTerminal(data) {
+  const charStack = [];
+
+  charStack.push(inColor("green", "{\n"));
+
+  for (const [key, value] of Object.entries(data)) {
+    charStack.push("  ");
+    charStack.push(...keyValueInColor(key, value));
+    charStack.push("\n");
+  }
+
+  charStack.push(inColor("green", "}\n"));
+
+  let index = 0;
+  const delay = 40;
+
+  const interval = setInterval(() => {
+    if (index < charStack.length) {
+      process.stdout.write(charStack[index++]);
+    } else {
+      clearInterval(interval);
+    }
+  }, 40);
+}
+
+function getLatestAboutMe(filePath) {
+  let aboutMe = {
+    name: "Nithin V",
+    website: "https://codebynithin.com",
+    job: "Software Engineer",
+    github: "https://github.com/codebynithin",
+    twitter: "https://twitter.com/Nithin_V86",
+    linkedin: "https://www.linkedin.com/in/nithinvuideveloper/",
+    facebook: "https://www.facebook.com/nithinvuideveloper",
+  };
+
+  return new Promise((resolve, reject) => {
+    https
+      .get(filePath, function (res) {
+        let body = "";
+
+        res.on("data", function (chunk) {
+          body += chunk;
+        });
+
+        res.on("end", function () {
+          aboutMe = JSON.parse(body);
+
+          resolve(aboutMe);
+        });
+      })
+      .on("error", function (e) {
+        resolve(aboutMe);
+      });
+  });
+}
+
+getLatestAboutMe(aboutMeFilePath).then((aboutMe) => {
+  typeToTerminal(aboutMe);
+});
