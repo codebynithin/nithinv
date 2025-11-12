@@ -60,12 +60,13 @@ function typeToTerminal(data) {
 function getLatestAboutMe(filePath) {
   let aboutMe = {
     name: "Nithin V",
-    website: "https://codebynithin.com",
-    job: "Software Engineer",
-    github: "https://github.com/codebynithin",
-    twitter: "https://twitter.com/Nithin_V86",
-    linkedin: "https://www.linkedin.com/in/nithinvuideveloper/",
-    facebook: "https://www.facebook.com/nithinvuideveloper",
+    website: "https://codebynithin.com/",
+    job: "Full Stack Developer",
+    github: "https://github.com/codebynithin/",
+    twitter: "https://twitter.com/codebynithin/",
+    linkedin: "https://www.linkedin.com/in/codebynithinv/",
+    facebook: "https://www.facebook.com/codebynithin/",
+    instagram: "https://www.instagram.com/codebynithin/",
   };
 
   return new Promise((resolve, reject) => {
