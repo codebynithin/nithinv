@@ -86,7 +86,7 @@ function getLatestAboutMe(filePath) {
     instagram: "https://www.instagram.com/codebynithin/",
   };
 
-  return new Promise((resolve, reject) => {
+  return new Promise((resolve) => {
     https
       .get(filePath, function (res) {
         let body = "";
